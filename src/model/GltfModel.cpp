@@ -162,17 +162,6 @@ void GltfModel::draw()
     mTex->unbind();
 }
 
-void GltfModel::drawDebug()
-{
-    for(GltfNodeShared node : mNodes)
-    {
-        if(node)
-        {
-            node->drawDebug();
-        }
-    }
-}
-
 GltfModel::~GltfModel()
 {
     glDeleteBuffers(mVertexVBO.size(), mVertexVBO.data());

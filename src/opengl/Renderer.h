@@ -42,6 +42,7 @@ private:
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     std::shared_ptr<UniformBuffer> mUniformBuffer;
+    std::shared_ptr<UniformBuffer> mDebugUniformBuffer;
     std::shared_ptr<ShaderStorageBuffer<glm::mat4>> mShaderStorageBufferJointMatrices;
     // std::shared_ptr<ShaderStorageBuffer<glm::mat2x4>> mShaderStorageBufferJointDualQuats;
     GltfModelShared mGltfModel;

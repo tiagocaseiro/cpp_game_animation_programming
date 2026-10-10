@@ -18,6 +18,7 @@ public:
     ~UniformBuffer();
     void uploadData(const std::vector<glm::mat4>& matrices);
     void uploadData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix);
+    void uploadData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::mat4 worldMatrix);
 
 private:
     UniformBuffer(int bindingPoint, int bufferSize);

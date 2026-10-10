@@ -74,6 +74,7 @@ Renderer::Renderer(ShaderShared const& gltfShader, ShaderShared const& debugGltf
       mGltfModel(gltfModel),
       mRenderData(renderData),
       mUniformBuffer(UniformBuffer::make(0, 2 * sizeof(glm::mat4))),
+      mDebugUniformBuffer(UniformBuffer::make(0, 3 * sizeof(glm::mat4))),
       mShaderStorageBufferJointMatrices(ShaderStorageBuffer<glm::mat4>::make(1, gltfModel->getJointMatrices())),
       //   mShaderStorageBufferJointDualQuats(ShaderStorageBuffer<glm::mat2x4>::make(2,
       //   gltfModel->getJointDualQuats())),
@@ -196,10 +197,22 @@ void Renderer::draw()
 
     mGltfModel->draw();
 
+    glDisable(GL_DEPTH_TEST);
     mDebugGltfShader->use();
-    mGltfModel->drawDebug();
+
+    for(GltfNodeShared node : mGltfModel->nodes())
+    {
+        if(node && mDebugUniformBuffer)
+        {
+            glm::mat4 const worldMatrix = glm::scale(node->worldTransform(), glm::vec3(10.0, 10.0, 10.0));
+            mDebugUniformBuffer->uploadData(mViewMatrix, mProjectionMatrix, worldMatrix);
+            node->drawDebug();
+        }
+    }
 
     mFramebuffer.drawToScreen();
+
+    glEnable(GL_DEPTH_TEST);
 
     mUIGenerateTimer.start();
     handleMovementKeys();

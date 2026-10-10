@@ -53,6 +53,8 @@ public:
 
     void drawDebug();
 
+    glm::mat4 worldTransform() const { return mNodeMatrix; }
+
     std::vector<GltfNodeShared> const& Children() const { return mChildNodes; }
 
     const std::string mNodeName;

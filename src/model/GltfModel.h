@@ -29,7 +29,6 @@ public:
     ~GltfModel();
 
     void draw();
-    void drawDebug();
 
     void uploadVertexBuffers();
     void uploadIndexBuffer();
@@ -55,6 +54,8 @@ public:
     void resetAdditiveMasks();
 
     std::string getNodeName(int nodeNum) const;
+
+    std::vector<GltfNodeShared> const nodes() const { return mNodes; }
 
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
