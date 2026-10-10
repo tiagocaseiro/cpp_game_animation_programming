@@ -195,18 +195,24 @@ void Renderer::draw()
     //     mShaderStorageBufferJointDualQuats->uploadData(mGltfModel->getJointDualQuats());
     // }
 
-    mGltfModel->draw();
-
-    glDisable(GL_DEPTH_TEST);
-    mDebugGltfShader->use();
-
-    for(GltfNodeShared node : mGltfModel->nodes())
+    if(mRenderData.rdShowMesh)
     {
-        if(node && mDebugUniformBuffer)
+        mGltfModel->draw();
+    }
+
+    if(mRenderData.rdShowNodeDebugMenu)
+    {
+        glDisable(GL_DEPTH_TEST);
+        mDebugGltfShader->use();
+
+        for(GltfNodeShared node : mGltfModel->nodes())
         {
-            glm::mat4 const worldMatrix = glm::scale(node->worldTransform(), glm::vec3(2.0, 2.0, 2.0));
-            mDebugUniformBuffer->uploadData(mViewMatrix, mProjectionMatrix, worldMatrix);
-            node->drawDebug();
+            if(node && mDebugUniformBuffer)
+            {
+                glm::mat4 const worldMatrix = glm::scale(node->worldTransform(), glm::vec3(2.0, 2.0, 2.0));
+                mDebugUniformBuffer->uploadData(mViewMatrix, mProjectionMatrix, worldMatrix);
+                node->drawDebug();
+            }
         }
     }
 

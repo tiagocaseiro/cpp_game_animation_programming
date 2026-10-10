@@ -66,4 +66,7 @@ struct OGLRenderData
     GltfNodeShared rdRootNode;
 
     glm::vec3 rdCameraWorldPosition = glm::vec3(1.5f, 4.0f, 4.5f);
+
+    bool rdShowMesh          = true;
+    bool rdShowNodeDebugMenu = true;
 };

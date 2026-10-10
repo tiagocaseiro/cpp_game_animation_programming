@@ -185,6 +185,9 @@ void UserInterface::createFrame(OGLRenderData& renderData)
         }
     }
 
+    ImGui::Checkbox("Show Mesh", &renderData.rdShowMesh);
+    ImGui::Checkbox("Show Skeleton Nodes", &renderData.rdShowNodeDebugMenu);
+
     ImGui::End();
 }
 
