@@ -350,6 +350,8 @@ void GltfModel::initializeNodes(OGLRenderData& renderData)
         mNodes.resize(nodeCount);
         mRootNode =
             GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
+
+        renderData.rdRootNode = mRootNode;
     }
 }
 

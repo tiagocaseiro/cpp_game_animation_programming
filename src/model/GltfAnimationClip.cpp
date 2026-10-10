@@ -92,8 +92,7 @@ void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& n
 
         int const targetNodeIndex = channel->mTargetNode;
 
-        if(targetNodeIndex >= nodes.size() || targetNodeIndex >= additiveAnimationMask.size() ||
-           additiveAnimationMask[targetNodeIndex] == false)
+        if(targetNodeIndex >= nodes.size())
         {
             continue;
         }
@@ -101,6 +100,11 @@ void GltfAnimationClip::blendAnimationFrame(std::vector<GltfNodeShared> const& n
         GltfNodeShared targetNode = nodes[targetNodeIndex];
 
         if(targetNode == nullptr)
+        {
+            continue;
+        }
+
+        if(targetNodeIndex >= additiveAnimationMask.size() || additiveAnimationMask[targetNodeIndex] == false)
         {
             continue;
         }

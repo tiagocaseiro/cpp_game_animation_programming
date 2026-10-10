@@ -6,6 +6,34 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #include "RenderData.h"
+#include "model/GltfNode.h"
+
+static void DrawNode(OGLRenderData& renderData, GltfNodeShared node)
+{
+    if(node)
+    {
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
+
+        if(node->Children().empty())
+        {
+            flags |= ImGuiTreeNodeFlags_Leaf;
+        }
+
+        if(ImGui::TreeNodeEx(node->mNodeName.c_str(), flags))
+        {
+            static std::string const radioButtonBaseId = "###Fade";
+
+            std::string const radioButtonId = radioButtonBaseId + std::to_string(node->mNodeNum);
+
+            ImGui::RadioButton(radioButtonId.c_str(), &renderData.rdSkelSplitNode, node->mNodeNum);
+            for(auto childNode : node->Children())
+            {
+                DrawNode(renderData, childNode);
+            }
+            ImGui::TreePop();
+        }
+    }
+}
 
 UserInterface::UserInterface(const OGLRenderData& renderData)
 {
@@ -122,67 +150,38 @@ void UserInterface::createFrame(OGLRenderData& renderData)
     if(ImGui::CollapsingHeader("gltf Blending", ImGuiTreeNodeFlags_DefaultOpen))
     {
 
-        ImGui::Checkbox("Blending Type: ", &renderData.rdCrossBlending);
+        ImGui::RadioButton("Fade In/Out", (int*)&renderData.rdBlendMode, 0);
         ImGui::SameLine();
-        if(renderData.rdCrossBlending)
-        {
-            ImGui::Text("Cross");
-        }
-        else
-        {
-            ImGui::Text("Single");
-        }
-
-        if(renderData.rdCrossBlending)
-        {
-            ImGui::BeginDisabled();
-        }
-
-        ImGui::Text("Blend Factor");
+        ImGui::RadioButton("Cross Fade", (int*)&renderData.rdBlendMode, 1);
         ImGui::SameLine();
-        ImGui::SliderFloat("##BlendFactor", &renderData.rdAnimBlendFactor, 0.0f, 1.0);
+        ImGui::RadioButton("Additive", (int*)&renderData.rdBlendMode, 2);
 
-        if(renderData.rdCrossBlending)
+        if(renderData.rdBlendMode == BlendMode::FadeInOut)
         {
-            ImGui::EndDisabled();
+            ImGui::Text("Blend Factor");
+            ImGui::SameLine();
+            ImGui::SliderFloat("##BlendFactor", &renderData.rdAnimBlendFactor, 0.0f, 1.0);
         }
 
-        if(renderData.rdCrossBlending == false)
+        if(renderData.rdBlendMode == BlendMode::CrossFade || renderData.rdBlendMode == BlendMode::Additive)
         {
-            ImGui::BeginDisabled();
-        }
 
-        ImGui::Text("DestClip ");
-        ImGui::SameLine();
-        ImGui::Combo("##DestClip", &renderData.rdCrossBlendDestAnimClip, renderData.rdAnimationClipNames.data(),
-                     renderData.rdAnimationClipNames.size());
+            ImGui::Text("DestClip ");
+            ImGui::SameLine();
+            ImGui::Combo("##DestClip", &renderData.rdCrossBlendDestAnimClip, renderData.rdAnimationClipNames.data(),
+                         renderData.rdAnimationClipNames.size());
 
-        ImGui::Text("Clip Duration (ms): %f", renderData.rdCrossBlendDestAnimDurationMs);
+            ImGui::Text("Clip Duration (ms): %f", renderData.rdCrossBlendDestAnimDurationMs);
 
-        ImGui::Text("Cross Blend Factor");
-        ImGui::SameLine();
-        ImGui::SliderFloat("##CrossBlendFactor", &renderData.rdAnimCrossBlendFactor, 0.0f, 1.0);
+            ImGui::Text("Cross Blend Factor");
+            ImGui::SameLine();
+            ImGui::SliderFloat("##CrossBlendFactor", &renderData.rdAnimCrossBlendFactor, 0.0f, 1.0);
 
-        if(renderData.rdCrossBlending == false)
-        {
-            ImGui::EndDisabled();
-        }
-
-        ImGui::Checkbox("Additive Blending: ", &renderData.rdAdditiveBlending);
-
-        if(renderData.rdAdditiveBlending == false)
-        {
-            ImGui::BeginDisabled();
-        }
-
-        ImGui::Text("Split Node: ");
-        ImGui::SameLine();
-        ImGui::SliderInt("##SplitNode", &renderData.rdSkelSplitNode, 0, renderData.rdNodeCount - 1);
-        ImGui::Text("Split Node Name: %s", renderData.rdSkelSplitNodeName.c_str());
-
-        if(renderData.rdAdditiveBlending == false)
-        {
-            ImGui::EndDisabled();
+            if(renderData.rdBlendMode == BlendMode::Additive)
+            {
+                ImGui::Text("Split Node ");
+                DrawNode(renderData, renderData.rdRootNode);
+            }
         }
     }
 

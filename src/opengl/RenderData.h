@@ -4,7 +4,16 @@
 
 #include <glm/glm.hpp>
 
+#include "model/GltfNode.h"
+
 struct GLFWwindow;
+
+enum BlendMode : int
+{
+    FadeInOut = 0,
+    CrossFade,
+    Additive
+};
 
 struct OGLVertexData
 {
@@ -39,7 +48,6 @@ struct OGLRenderData
     std::vector<char const*> rdAnimationClipNames;
 
     bool rdPlayAnimation                 = true;
-    std::string rdClipName               = "None";
     int rdAnimClip                       = 5;
     float rdAnimDurationMs               = 0.0f;
     int rdAnimClipSize                   = 0;
@@ -47,15 +55,15 @@ struct OGLRenderData
     float rdAnimTimePosition             = 0.0f;
     float rdAnimEndTime                  = 0.0f;
     float rdAnimBlendFactor              = 1.0f;
-    bool rdCrossBlending                 = false;
+    BlendMode rdBlendMode                = BlendMode::FadeInOut;
     int rdCrossBlendDestAnimClip         = 7;
     float rdCrossBlendDestAnimDurationMs = 0.0f;
     std::string rdCrossBlendDestAnimName = "None";
     float rdAnimCrossBlendFactor         = 1.0f;
 
-    bool rdAdditiveBlending         = false;
-    int rdSkelSplitNode             = 29;
-    std::string rdSkelSplitNodeName = "None";
+    int rdSkelSplitNode = 29;
+
+    GltfNodeShared rdRootNode;
 
     glm::vec3 rdCameraWorldPosition = glm::vec3(1.5f, 4.0f, 4.5f);
 };

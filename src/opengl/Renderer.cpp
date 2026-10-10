@@ -121,40 +121,25 @@ void Renderer::draw()
 
     mViewMatrix = mCamera.getViewMatrix(mRenderData) * model;
 
-    mRenderData.rdClipName       = mGltfModel->getClipName(mRenderData.rdAnimClip);
     mRenderData.rdAnimDurationMs = mGltfModel->getClipEndTime(mRenderData.rdAnimClip);
 
     mRenderData.rdCrossBlendDestAnimName       = mGltfModel->getClipName(mRenderData.rdCrossBlendDestAnimClip);
     mRenderData.rdCrossBlendDestAnimDurationMs = mGltfModel->getClipEndTime(mRenderData.rdCrossBlendDestAnimClip);
 
-    static bool blendingChanged = mRenderData.rdCrossBlending;
+    static BlendMode blendMode = mRenderData.rdBlendMode;
+    static int skelSplitNode   = mRenderData.rdSkelSplitNode;
 
-    if(blendingChanged != mRenderData.rdCrossBlending)
+    if(blendMode != mRenderData.rdBlendMode)
     {
-        blendingChanged = mRenderData.rdCrossBlending;
-        if(mRenderData.rdCrossBlending == false)
-        {
-            mRenderData.rdAdditiveBlending = false;
-        }
-
         mGltfModel->initializeNodes(mRenderData);
-    }
 
-    static bool additiveBlendingChanged = mRenderData.rdAdditiveBlending;
-    static int skelSplitNode            = mRenderData.rdSkelSplitNode;
-
-    if(additiveBlendingChanged != mRenderData.rdAdditiveBlending)
-    {
-        additiveBlendingChanged = mRenderData.rdAdditiveBlending;
-        if(additiveBlendingChanged)
+        blendMode = mRenderData.rdBlendMode;
+        if(blendMode == BlendMode::Additive)
         {
-            mRenderData.rdSkelSplitNodeName = mGltfModel->getNodeName(skelSplitNode);
-            mGltfModel->initializeNodes(mRenderData);
             mGltfModel->setSkeletonSplitNode(skelSplitNode);
         }
         else
         {
-            mGltfModel->initializeNodes(mRenderData);
             mGltfModel->resetAdditiveMasks();
         }
     }
@@ -163,14 +148,13 @@ void Renderer::draw()
     {
         skelSplitNode = mRenderData.rdSkelSplitNode;
 
-        mRenderData.rdSkelSplitNodeName = mGltfModel->getNodeName(skelSplitNode);
         mGltfModel->initializeNodes(mRenderData);
         mGltfModel->setSkeletonSplitNode(skelSplitNode);
     }
 
     if(mRenderData.rdPlayAnimation)
     {
-        if(mRenderData.rdCrossBlending)
+        if(mRenderData.rdBlendMode == BlendMode::CrossFade || mRenderData.rdBlendMode == BlendMode::Additive)
         {
             mGltfModel->playAnimation(mRenderData.rdAnimClip, mRenderData.rdCrossBlendDestAnimClip,
                                       mRenderData.rdAnimSpeed, mRenderData.rdAnimCrossBlendFactor);
