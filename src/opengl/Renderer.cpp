@@ -204,7 +204,7 @@ void Renderer::draw()
     {
         if(node && mDebugUniformBuffer)
         {
-            glm::mat4 const worldMatrix = glm::scale(node->worldTransform(), glm::vec3(10.0, 10.0, 10.0));
+            glm::mat4 const worldMatrix = glm::scale(node->worldTransform(), glm::vec3(2.0, 2.0, 2.0));
             mDebugUniformBuffer->uploadData(mViewMatrix, mProjectionMatrix, worldMatrix);
             node->drawDebug();
         }

@@ -2,11 +2,37 @@
 
 #include <algorithm>
 
+#include <glm/ext/scalar_constants.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <tiny_gltf.h>
 
-static float const vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+template <int NumSubDivisions>
+static auto unitSphereVertices()
+{
+    static_assert(NumSubDivisions >= 8, "NumSubDivisions can't be 0");
+
+    float constexpr step = (glm::pi<float>() * 2) / static_cast<float>(NumSubDivisions);
+
+    std::array<float, NumSubDivisions * 3 * 2> result;
+    for(int i = 0; i != NumSubDivisions; i++)
+    {
+        int const offset = 3 * i;
+
+        result[offset]     = glm::cos(step * i);
+        result[offset + 1] = glm::sin(step * i);
+        result[offset + 2] = 0.0f;
+
+        result[(NumSubDivisions * 3) + offset]     = glm::cos(step * i);
+        result[(NumSubDivisions * 3) + offset + 1] = 0.0;
+        result[(NumSubDivisions * 3) + offset + 2] = glm::sin(step * i);
+    }
+    return result;
+}
+
+static constexpr int subDivisions = 32;
+
+static auto vertices = unitSphereVertices<subDivisions>();
 
 void printWhitespace(std::ostream& os, const int width)
 {
@@ -193,9 +219,9 @@ void GltfNode::createDebugVertexBuffers()
 
     glBindBuffer(GL_ARRAY_BUFFER, mDebugVBO);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
     glEnableVertexAttribArray(0);
 
@@ -207,7 +233,7 @@ void GltfNode::createDebugVertexBuffers()
 void GltfNode::drawDebug()
 {
     glBindVertexArray(mDebugVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_LINE_LOOP, 0, subDivisions * 2);
     glBindVertexArray(0);
 }
 
