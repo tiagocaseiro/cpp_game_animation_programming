@@ -131,6 +131,7 @@ GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::s
 
     for(const auto& anim : mModel->animations)
     {
+        renderData.rdAnimationClipNames.push_back(anim.name.c_str());
         mAnimClips.push_back(GltfAnimationClip::make(*mModel, anim));
     }
 

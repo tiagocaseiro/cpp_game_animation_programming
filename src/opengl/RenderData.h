@@ -36,6 +36,8 @@ struct OGLRenderData
     int rdAnimationClipSize          = 0;
     int rdNodeCount                  = 0;
 
+    std::vector<char const*> rdAnimationClipNames;
+
     bool rdPlayAnimation                 = true;
     std::string rdClipName               = "None";
     int rdAnimClip                       = 5;

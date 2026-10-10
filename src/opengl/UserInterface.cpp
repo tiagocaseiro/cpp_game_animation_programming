@@ -81,11 +81,10 @@ void UserInterface::createFrame(OGLRenderData& renderData)
 
     if(ImGui::CollapsingHeader("gltf Animation", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        ImGui::Text("Clip #");
+        ImGui::Text("Clip ");
         ImGui::SameLine();
-        ImGui::SliderInt("##Clip", &renderData.rdAnimClip, 0, renderData.rdAnimationClipSize - 1);
-
-        ImGui::Text("Clip Name: %s", renderData.rdClipName.c_str());
+        ImGui::Combo("##AnimClip", &renderData.rdAnimClip, renderData.rdAnimationClipNames.data(),
+                     renderData.rdAnimationClipNames.size());
 
         ImGui::Text("Clip Duration (ms): %f", renderData.rdAnimDurationMs);
 
@@ -153,10 +152,10 @@ void UserInterface::createFrame(OGLRenderData& renderData)
             ImGui::BeginDisabled();
         }
 
-        ImGui::Text("DestClip #");
+        ImGui::Text("DestClip ");
         ImGui::SameLine();
-        ImGui::SliderInt("##DestClip", &renderData.rdCrossBlendDestAnimClip, 0, renderData.rdAnimationClipSize - 1);
-        ImGui::Text("Dest Clip Name: %s", renderData.rdCrossBlendDestAnimName.c_str());
+        ImGui::Combo("##DestClip", &renderData.rdCrossBlendDestAnimClip, renderData.rdAnimationClipNames.data(),
+                     renderData.rdAnimationClipNames.size());
 
         ImGui::Text("Clip Duration (ms): %f", renderData.rdCrossBlendDestAnimDurationMs);
 
