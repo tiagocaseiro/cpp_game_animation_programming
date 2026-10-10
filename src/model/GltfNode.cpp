@@ -85,7 +85,7 @@ GltfNodeShared GltfNode::createNodeTree(const int nodeNum, const tinygltf::Model
 GltfNode::~GltfNode()
 {
     glDeleteBuffers(1, &mDebugVBO);
-    glDeleteBuffers(1, &mDebugVAO);
+    glDeleteVertexArrays(1, &mDebugVAO);
 }
 
 void GltfNode::blendRotation(glm::quat const& rotation, float blendFactor)
