@@ -2,6 +2,7 @@
 
 #include "FrameBuffer.h"
 #include "RenderData.h"
+#include "Shader.h"
 #include "ShaderStorageBuffer.h"
 #include "UserInterface.h"
 #include "VertexBuffer.h"
@@ -33,10 +34,11 @@ public:
     void handleMovementKeys();
 
 private:
-    Renderer(const std::shared_ptr<Shader>& mGltfShader, const Framebuffer& mFramebuffer,
-             const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& mRenderData);
+    Renderer(ShaderShared const& gltfShader, ShaderShared const& debugGltfShader, const Framebuffer& framebuffer,
+             const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData);
 
-    std::shared_ptr<Shader> mGltfShader;
+    ShaderShared mGltfShader;
+    ShaderShared mDebugGltfShader;
     Framebuffer mFramebuffer;
     VertexBuffer mVertexBuffer;
     std::shared_ptr<UniformBuffer> mUniformBuffer;

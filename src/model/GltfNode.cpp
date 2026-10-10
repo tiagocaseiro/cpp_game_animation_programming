@@ -6,6 +6,8 @@
 
 #include <tiny_gltf.h>
 
+static float const vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+
 void printWhitespace(std::ostream& os, const int width)
 {
     for(int i = 0; i != width; i++)
@@ -52,6 +54,12 @@ GltfNodeShared GltfNode::createNodeTree(const int nodeNum, const tinygltf::Model
     }
 
     return createNode(nullptr, nodeNum, model, nodeToJoint, inverseBindMatrices, jointMatrices, nodes);
+}
+
+GltfNode::~GltfNode()
+{
+    glDeleteBuffers(1, &mDebugVBO);
+    glDeleteBuffers(1, &mDebugVAO);
 }
 
 void GltfNode::blendRotation(glm::quat const& rotation, float blendFactor)
@@ -152,6 +160,8 @@ GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinyglt
     const int jointIndex = nodeToJoint[mNodeNum];
 
     jointMatrices[jointIndex] = mNodeMatrix * inverseBindMatrices[jointIndex];
+
+    createDebugVertexBuffers();
 }
 
 void GltfNode::printNode(std::ostream& os, int depth) const
@@ -172,6 +182,33 @@ void GltfNode::printNode(std::ostream& os, int depth) const
         }
         childNode->printNode(os, depth);
     }
+}
+
+void GltfNode::createDebugVertexBuffers()
+{
+    glGenVertexArrays(1, &mDebugVAO);
+    glGenBuffers(1, &mDebugVBO);
+
+    glBindVertexArray(mDebugVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mDebugVBO);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+}
+
+void GltfNode::drawDebug()
+{
+    glBindVertexArray(mDebugVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
 }
 
 std::ostream& operator<<(std::ostream& os, const GltfNode& node)

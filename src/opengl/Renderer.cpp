@@ -35,7 +35,13 @@ RendererShared Renderer::make(const int width, const int height, GLFWwindow* win
     renderData.rdHeight = height;
     renderData.rdWindow = window;
 
-    std::shared_ptr<Shader> gltfShader = Shader::make("../shaders/gltf_gpu.vert", "../shaders/gltf_gpu.frag");
+    ShaderShared gltfShader = Shader::make("../shaders/gltf_gpu.vert", "../shaders/gltf_gpu.frag");
+    if(gltfShader == nullptr)
+    {
+        return nullptr;
+    }
+
+    ShaderShared gltfDebugShader = Shader::make("../shaders/gltf_debug.vert", "../shaders/gltf_debug.frag");
     if(gltfShader == nullptr)
     {
         return nullptr;
@@ -57,12 +63,13 @@ RendererShared Renderer::make(const int width, const int height, GLFWwindow* win
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
-    return RendererShared(new Renderer(gltfShader, framebuffer, gltfModel, renderData));
+    return RendererShared(new Renderer(gltfShader, gltfDebugShader, framebuffer, gltfModel, renderData));
 }
 
-Renderer::Renderer(const ShaderShared& gltfShader, const Framebuffer& framebuffer, const GltfModelShared& gltfModel,
-                   const OGLRenderData& renderData)
+Renderer::Renderer(ShaderShared const& gltfShader, ShaderShared const& debugGltfShader, const Framebuffer& framebuffer,
+                   const GltfModelShared& gltfModel, const OGLRenderData& renderData)
     : mGltfShader(gltfShader),
+      mDebugGltfShader(debugGltfShader),
       mFramebuffer(framebuffer),
       mGltfModel(gltfModel),
       mRenderData(renderData),
@@ -189,7 +196,8 @@ void Renderer::draw()
 
     mGltfModel->draw();
 
-    mFramebuffer.bind();
+    mDebugGltfShader->use();
+    mGltfModel->drawDebug();
 
     mFramebuffer.drawToScreen();
 

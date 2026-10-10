@@ -54,7 +54,7 @@ struct OGLRenderData
     float rdAnimSpeed                    = 1.0f;
     float rdAnimTimePosition             = 0.0f;
     float rdAnimEndTime                  = 0.0f;
-    float rdAnimBlendFactor              = 1.0f;
+    float rdAnimBlendFactor              = 0.0f;
     BlendMode rdBlendMode                = BlendMode::FadeInOut;
     int rdCrossBlendDestAnimClip         = 7;
     float rdCrossBlendDestAnimDurationMs = 0.0f;

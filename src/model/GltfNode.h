@@ -6,6 +6,8 @@
 #include <string_view>
 #include <vector>
 
+#include <glad/glad.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 
@@ -34,6 +36,8 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
+    ~GltfNode();
+
     void blendRotation(glm::quat const& rotation, float blendFactor);
     void blendTranslation(glm::vec3 const& translation, float blendFactor);
     void blendScale(glm::vec3 const& scale, float blendFactor);
@@ -47,6 +51,8 @@ public:
     void calculateTreeMatrices(const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                                glm::mat4 const& parentMatrix, std::vector<glm::mat4>& jointMatrices);
 
+    void drawDebug();
+
     std::vector<GltfNodeShared> const& Children() const { return mChildNodes; }
 
     const std::string mNodeName;
@@ -57,9 +63,13 @@ private:
                                      const tinygltf::Model& model, const std::vector<int>& nodeToJoint,
                                      const std::vector<glm::mat4>& inverseBindMatrices,
                                      std::vector<glm::mat4>& mJointMatrices, std::vector<GltfNodeShared>& nodes);
+
     GltfNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,
              const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
              std::vector<glm::mat4>& jointMatrices);
+
+    void createDebugVertexBuffers();
+
     void printNode(std::ostream& os, int depth) const;
 
     std::vector<GltfNodeShared> mChildNodes;
@@ -74,6 +84,9 @@ private:
 
     glm::mat4 mLocalTransform = glm::mat4(1.0f);
     glm::mat4 mNodeMatrix     = glm::mat4(1.0f);
+
+    GLuint mDebugVBO = 0;
+    GLuint mDebugVAO = 0;
 };
 
 std::ostream& operator<<(std::ostream& os, const GltfNode& node);

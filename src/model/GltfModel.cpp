@@ -162,6 +162,17 @@ void GltfModel::draw()
     mTex->unbind();
 }
 
+void GltfModel::drawDebug()
+{
+    for(GltfNodeShared node : mNodes)
+    {
+        if(node)
+        {
+            node->drawDebug();
+        }
+    }
+}
+
 GltfModel::~GltfModel()
 {
     glDeleteBuffers(mVertexVBO.size(), mVertexVBO.data());
@@ -347,6 +358,7 @@ void GltfModel::initializeNodes(OGLRenderData& renderData)
 
         renderData.rdNodeCount = nodeCount;
 
+        mNodes.clear();
         mNodes.resize(nodeCount);
         mRootNode =
             GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);

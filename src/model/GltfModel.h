@@ -29,6 +29,7 @@ public:
     ~GltfModel();
 
     void draw();
+    void drawDebug();
 
     void uploadVertexBuffers();
     void uploadIndexBuffer();
