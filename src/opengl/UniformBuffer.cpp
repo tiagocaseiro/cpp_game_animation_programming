@@ -12,14 +12,6 @@ UniformBuffer::UniformBuffer(int bindingPoint, int bufferSize) : mBufferSize(buf
 
 UniformBuffer::~UniformBuffer() { glDeleteBuffers(1, &mBuffer); }
 
-void UniformBuffer::uploadData(const std::vector<glm::mat4>& matrices)
-{
-    glBindBuffer(GL_UNIFORM_BUFFER, mBuffer);
-    glBufferData(GL_UNIFORM_BUFFER, mBufferSize, matrices.data(), GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_UNIFORM_BUFFER, mBindingPoint, mBuffer);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
 void UniformBuffer::uploadData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 {
     glBindBuffer(GL_UNIFORM_BUFFER, mBuffer);
@@ -35,6 +27,19 @@ void UniformBuffer::uploadData(glm::mat4 viewMatrix, glm::mat4 projectionMatrix,
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewMatrix));
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projectionMatrix));
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, sizeof(glm::mat4), glm::value_ptr(worldMatrix));
+    glBindBufferRange(GL_UNIFORM_BUFFER, mBindingPoint, mBuffer, 0, mBufferSize);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void UniformBuffer::startUpload() { glBindBuffer(GL_UNIFORM_BUFFER, mBuffer); }
+
+void UniformBuffer::uploadPartialData(int offset, int size, void* data)
+{
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+}
+
+void UniformBuffer::endUpload()
+{
     glBindBufferRange(GL_UNIFORM_BUFFER, mBindingPoint, mBuffer, 0, mBufferSize);
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

@@ -61,7 +61,8 @@ struct OGLRenderData
     std::string rdCrossBlendDestAnimName = "None";
     float rdAnimCrossBlendFactor         = 1.0f;
 
-    int rdSkelSplitNode = 29;
+    int rdSkelSplitNode     = 29;
+    int rdDebugSelectedNode = 0;
 
     GltfNodeShared rdRootNode;
 

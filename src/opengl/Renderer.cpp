@@ -74,7 +74,7 @@ Renderer::Renderer(ShaderShared const& gltfShader, ShaderShared const& debugGltf
       mGltfModel(gltfModel),
       mRenderData(renderData),
       mUniformBuffer(UniformBuffer::make(0, 2 * sizeof(glm::mat4))),
-      mDebugUniformBuffer(UniformBuffer::make(0, 3 * sizeof(glm::mat4))),
+      mDebugUniformBuffer(UniformBuffer::make(0, 3 * sizeof(glm::mat4) + sizeof(int))),
       mShaderStorageBufferJointMatrices(ShaderStorageBuffer<glm::mat4>::make(1, gltfModel->getJointMatrices())),
       //   mShaderStorageBufferJointDualQuats(ShaderStorageBuffer<glm::mat2x4>::make(2,
       //   gltfModel->getJointDualQuats())),
@@ -209,8 +209,18 @@ void Renderer::draw()
         {
             if(node && mDebugUniformBuffer)
             {
-                glm::mat4 const worldMatrix = glm::scale(node->worldTransform(), glm::vec3(2.0, 2.0, 2.0));
-                mDebugUniformBuffer->uploadData(mViewMatrix, mProjectionMatrix, worldMatrix);
+                glm::mat4 worldMatrix = glm::scale(node->worldTransform(), glm::vec3(5.0, 5.0, 5.0));
+
+                int32_t isSelected = node->mNodeNum == mRenderData.rdDebugSelectedNode;
+                mDebugUniformBuffer->startUpload();
+                mDebugUniformBuffer->uploadPartialData(0, sizeof(glm::mat4), glm::value_ptr(mViewMatrix));
+                mDebugUniformBuffer->uploadPartialData(sizeof(glm::mat4), sizeof(glm::mat4),
+                                                       glm::value_ptr(mProjectionMatrix));
+                mDebugUniformBuffer->uploadPartialData(sizeof(glm::mat4) * 2, sizeof(glm::mat4),
+                                                       glm::value_ptr(worldMatrix));
+                mDebugUniformBuffer->uploadPartialData(sizeof(glm::mat4) * 3, sizeof(isSelected), &isSelected);
+                mDebugUniformBuffer->endUpload();
+
                 node->drawDebug();
             }
         }

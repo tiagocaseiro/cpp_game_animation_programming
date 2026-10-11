@@ -8,7 +8,7 @@
 #include "RenderData.h"
 #include "model/GltfNode.h"
 
-static void DrawNode(OGLRenderData& renderData, GltfNodeShared node)
+static void DrawNode(OGLRenderData& renderData, GltfNodeShared node, int* value)
 {
     if(node)
     {
@@ -19,16 +19,16 @@ static void DrawNode(OGLRenderData& renderData, GltfNodeShared node)
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
 
-        if(ImGui::TreeNodeEx(node->mNodeName.c_str(), flags))
+        if(ImGui::TreeNodeEx((node->mNodeName + "(" + std::to_string(node->mNodeNum) + ")").c_str(), flags))
         {
             static std::string const radioButtonBaseId = "###Fade";
 
             std::string const radioButtonId = radioButtonBaseId + std::to_string(node->mNodeNum);
 
-            ImGui::RadioButton(radioButtonId.c_str(), &renderData.rdSkelSplitNode, node->mNodeNum);
+            ImGui::RadioButton(radioButtonId.c_str(), value, node->mNodeNum);
             for(auto childNode : node->Children())
             {
-                DrawNode(renderData, childNode);
+                DrawNode(renderData, childNode, value);
             }
             ImGui::TreePop();
         }
@@ -59,6 +59,9 @@ void UserInterface::createFrame(OGLRenderData& renderData)
 
     ImGuiWindowFlags imguiWindowFlags = 0;
     ImGui::SetNextWindowBgAlpha(0.8f);
+
+    ImGui::PushID("Control");
+
     ImGui::Begin("Control", nullptr, imguiWindowFlags);
 
     static float newFps = 0.0f;
@@ -180,7 +183,7 @@ void UserInterface::createFrame(OGLRenderData& renderData)
             if(renderData.rdBlendMode == BlendMode::Additive)
             {
                 ImGui::Text("Split Node ");
-                DrawNode(renderData, renderData.rdRootNode);
+                DrawNode(renderData, renderData.rdRootNode, &renderData.rdSkelSplitNode);
             }
         }
     }
@@ -189,6 +192,15 @@ void UserInterface::createFrame(OGLRenderData& renderData)
     ImGui::Checkbox("Show Skeleton Nodes", &renderData.rdShowNodeDebugMenu);
 
     ImGui::End();
+    ImGui::PopID();
+
+    ImGui::PushID("NodeTree");
+
+    ImGui::Begin("Node Tree", nullptr, imguiWindowFlags);
+    DrawNode(renderData, renderData.rdRootNode, &renderData.rdDebugSelectedNode);
+    ImGui::End();
+
+    ImGui::PopID();
 }
 
 void UserInterface::render()
