@@ -58,6 +58,8 @@ public:
 
     std::vector<GltfNodeShared> const& Children() const { return mChildNodes; }
 
+    GltfNodeShared ParentNode() const { return mParentNode.lock(); };
+
     const std::string mNodeName;
     const int mNodeNum;
 
@@ -91,7 +93,7 @@ private:
     GLuint mDebugVBO = 0;
     GLuint mDebugVAO = 0;
 
-    const std::weak_ptr<GltfNode> mParentNode;
+    const GltfNodeWeak mParentNode;
 };
 
 std::ostream& operator<<(std::ostream& os, const GltfNode& node);

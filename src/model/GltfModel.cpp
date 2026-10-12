@@ -393,14 +393,36 @@ void GltfModel::resetAdditiveMasks()
     mInvertedAdditiveAnimationMask = std::vector<bool>(mNodes.size(), false);
 }
 
-std::string GltfModel::getNodeName(int nodeNum) const
+void GltfModel::setInverseKinematicsNode(int effectiveNodeNum, int ikChainRootNodeNum)
 {
-    if(nodeNum < mNodes.size())
+    if(effectiveNodeNum < 0 || effectiveNodeNum >= mNodes.size() || ikChainRootNodeNum < 0 ||
+       ikChainRootNodeNum >= mNodes.size())
     {
-        if(GltfNodeShared node = mNodes[nodeNum])
+        return;
+    }
+
+    GltfNodeShared currentNode = mNodes[effectiveNodeNum];
+    GltfNodeShared rootNode    = mNodes[ikChainRootNodeNum];
+
+    if(currentNode == nullptr || rootNode == nullptr)
+    {
+        return;
+    }
+
+    std::vector<GltfNodeShared> ikNodes = {currentNode};
+
+    while(currentNode != rootNode)
+    {
+        if(GltfNodeShared const parentNode = currentNode->ParentNode())
         {
-            return node->mNodeName;
+            ikNodes.push_back(parentNode);
+            currentNode = parentNode;
+        }
+        else
+        {
+            break;
         }
     }
-    return "(Invalid)";
+
+    // mIKSolver.setNodes(ikNodes);
 }
