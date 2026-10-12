@@ -53,7 +53,7 @@ public:
 
     void resetAdditiveMasks();
 
-    std::string getNodeName(int nodeNum) const;
+    void setInverseKinematicsNode(int effectiveNodeNum, int ikChainRootNodeNum);
 
     std::vector<GltfNodeShared> const nodes() const { return mNodes; }
 

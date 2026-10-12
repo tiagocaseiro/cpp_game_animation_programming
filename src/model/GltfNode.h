@@ -30,9 +30,6 @@ public:
                                          const std::vector<int>& nodeToJoint,
                                          const std::vector<glm::mat4>& inverseBindMatrices,
                                          std::vector<glm::mat4>& mJointMatrices, std::vector<GltfNodeShared>& nodes);
-    static void resetNodeTree(const int nodeNum, const tinygltf::Model& model, const std::vector<int>& nodeToJoint,
-                              const std::vector<glm::mat4>& inverseBindMatrices, std::vector<glm::mat4>& mJointMatrices,
-                              std::vector<GltfNodeShared>& nodes);
 
     friend std::ostream& operator<<(std::ostream& os, const GltfNode& node);
 
@@ -46,10 +43,14 @@ public:
     void setTranslation(glm::vec3 const& translation);
     void setScale(glm::vec3 const& scale);
 
+    glm::quat getGlobalRotation() const;
+    glm::quat getLocalRotation() const;
+    glm::vec3 getGlobalPosition() const;
+
     void calculateLocalTransform();
 
     void calculateTreeMatrices(const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
-                               glm::mat4 const& parentMatrix, std::vector<glm::mat4>& jointMatrices);
+                               std::vector<glm::mat4>& jointMatrices);
 
     void drawDebug();
 
@@ -89,6 +90,8 @@ private:
 
     GLuint mDebugVBO = 0;
     GLuint mDebugVAO = 0;
+
+    const std::weak_ptr<GltfNode> mParentNode;
 };
 
 std::ostream& operator<<(std::ostream& os, const GltfNode& node);

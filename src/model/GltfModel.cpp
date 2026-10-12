@@ -313,7 +313,7 @@ void GltfModel::blendAnimationFrame(int animNum, float time, float blendFactor)
 {
     GltfAnimationClip& animClip = mAnimClips[animNum];
     animClip.blendAnimationFrame(mNodes, mAdditiveAnimationMask, time, blendFactor);
-    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
+    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, mJointMatrices);
 }
 
 void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor)
@@ -332,7 +332,7 @@ void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, flo
     destAnimClip.setAnimationFrame(mNodes, mInvertedAdditiveAnimationMask, scaledDestTime);
     sourceAnimClip.blendAnimationFrame(mNodes, mInvertedAdditiveAnimationMask, time, blendFactor);
 
-    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, IDENTITY_TRANSFORM, mJointMatrices);
+    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, mJointMatrices);
 }
 
 void GltfModel::initializeNodes(OGLRenderData& renderData)

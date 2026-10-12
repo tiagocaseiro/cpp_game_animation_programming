@@ -1,9 +1,12 @@
 #include "GltfNode.h"
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <algorithm>
 
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <tiny_gltf.h>
 
@@ -127,6 +130,40 @@ void GltfNode::setScale(glm::vec3 const& scale)
     mBlendScale = scale;
 }
 
+glm::quat GltfNode::getGlobalRotation() const
+{
+    glm::vec3 scale;
+    glm::quat orientation;
+    glm::vec3 translation;
+    glm::vec3 skew;
+    glm::vec4 perspective;
+
+    if(glm::decompose(mNodeMatrix, scale, orientation, translation, skew, perspective) == false)
+    {
+        return DEFAULT_ROTATION;
+    }
+
+    return glm::inverse(orientation);
+}
+
+glm::quat GltfNode::getLocalRotation() const { return mBlendRotation; }
+
+glm::vec3 GltfNode::getGlobalPosition() const
+{
+    glm::vec3 scale;
+    glm::quat orientation;
+    glm::vec3 translation;
+    glm::vec3 skew;
+    glm::vec4 perspective;
+
+    if(glm::decompose(mNodeMatrix, scale, orientation, translation, skew, perspective) == false)
+    {
+        return DEFAULT_TRANSLATION;
+    }
+
+    return translation;
+}
+
 void GltfNode::calculateLocalTransform()
 {
     glm::mat4 const sMatrix = glm::scale(glm::mat4(1.0f), mBlendScale);
@@ -137,9 +174,16 @@ void GltfNode::calculateLocalTransform()
 }
 
 void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
-                                     const std::vector<glm::mat4>& inverseBindMatrices, glm::mat4 const& parentMatrix,
+                                     const std::vector<glm::mat4>& inverseBindMatrices,
                                      std::vector<glm::mat4>& jointMatrices)
 {
+    glm::mat4 parentMatrix = IDENTITY_TRANSFORM;
+
+    if(GltfNodeShared parentNode = mParentNode.lock())
+    {
+        parentMatrix = parentNode->mNodeMatrix;
+    }
+
     mNodeMatrix = parentMatrix * mLocalTransform;
 
     const int jointIndex = nodeToJoint[mNodeNum];
@@ -150,7 +194,7 @@ void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
     {
         if(child)
         {
-            child->calculateTreeMatrices(nodeToJoint, inverseBindMatrices, mNodeMatrix, jointMatrices);
+            child->calculateTreeMatrices(nodeToJoint, inverseBindMatrices, jointMatrices);
         }
     }
 }
@@ -158,7 +202,7 @@ void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
 GltfNode::GltfNode(const GltfNodeShared parent, const int nodeNum, const tinygltf::Model& model,
                    const std::vector<int>& nodeToJoint, const std::vector<glm::mat4>& inverseBindMatrices,
                    std::vector<glm::mat4>& jointMatrices)
-    : mNodeNum(nodeNum), mNodeName(model.nodes[nodeNum].name)
+    : mNodeNum(nodeNum), mNodeName(model.nodes[nodeNum].name), mParentNode(parent)
 {
     const tinygltf::Node& node = model.nodes[nodeNum];
 
