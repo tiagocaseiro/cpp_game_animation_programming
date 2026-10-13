@@ -3,12 +3,9 @@
 #include <memory>
 #include <string>
 
-#include "Model.h"
 #include "opengl/Renderer.h"
 
 struct GLFWwindow;
-
-class Model;
 
 class Window
 {
@@ -26,5 +23,4 @@ private:
     GLFWwindow* mWindow = nullptr;
 
     RendererShared mRenderer;
-    std::unique_ptr<Model> mModel;
 };

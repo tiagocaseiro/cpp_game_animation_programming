@@ -79,9 +79,6 @@ bool Window::init(const int width, const int height, const std::string& title)
 
     glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-    mModel = std::make_unique<Model>();
-    mModel->init();
-
     Logger::log(1, "%s: Window successfully initialized\n", __FUNCTION__);
     return true;
 }
@@ -89,8 +86,6 @@ bool Window::init(const int width, const int height, const std::string& title)
 void Window::mainLoop()
 {
     glfwSwapInterval(1);
-
-    mRenderer->uploadData(mModel->getVertexData());
 
     while(glfwWindowShouldClose(mWindow) == false)
     {
