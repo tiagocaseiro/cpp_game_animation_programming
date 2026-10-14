@@ -11,26 +11,26 @@
 SHARED_ONLY(UniformBuffer);
 
 template <typename... Types>
-struct buffer_size
+struct uniform_buffer_size
 {
 private:
     template <size_t Size, typename A, typename... Types>
-    struct buffer_size_internal : buffer_size_internal<Size + sizeof(A), Types...>
+    struct uniform_buffer_size_internal : buffer_size_internal<Size + sizeof(A), Types...>
     {
     };
 
     template <size_t Size, typename A>
-    struct buffer_size_internal<Size, A>
+    struct uniform_buffer_size_internal<Size, A>
     {
         static constexpr size_t value = Size + sizeof(A);
     };
 
 public:
-    static constexpr size_t value = buffer_size_internal<0, Types...>::value;
+    static constexpr size_t value = uniform_buffer_size_internal<0, Types...>::value;
 };
 
 template <typename... Types>
-constexpr size_t buffer_size_v = buffer_size<Types...>::value;
+constexpr size_t uniform_buffer_size_v = uniform_buffer_size<Types...>::value;
 
 class UniformBuffer
 {
@@ -40,7 +40,7 @@ public:
     template <typename... Types>
     static UniformBufferShared make(int bindingPoint)
     {
-        static constexpr size_t bufferSize = buffer_size_v<Types...>;
+        static constexpr size_t bufferSize = uniform_buffer_size_v<Types...>;
         return make(bindingPoint, bufferSize);
     }
 
