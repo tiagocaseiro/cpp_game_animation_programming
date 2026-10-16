@@ -29,7 +29,7 @@ RendererShared Renderer::make(const int width, const int height, GLFWwindow* win
         return nullptr;
     }
 
-    OGLRenderData renderData;
+    RenderData renderData;
 
     renderData.rdWidth  = width;
     renderData.rdHeight = height;
@@ -67,7 +67,7 @@ RendererShared Renderer::make(const int width, const int height, GLFWwindow* win
 }
 
 Renderer::Renderer(ShaderShared const& gltfShader, ShaderShared const& debugGltfShader, const Framebuffer& framebuffer,
-                   const GltfModelShared& gltfModel, const OGLRenderData& renderData)
+                   const GltfModelShared& gltfModel, const RenderData& renderData)
     : mGltfShader(gltfShader),
       mDebugGltfShader(debugGltfShader),
       mFramebuffer(framebuffer),

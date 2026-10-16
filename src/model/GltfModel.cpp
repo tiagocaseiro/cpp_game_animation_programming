@@ -34,7 +34,7 @@ static int getAttributeIndex(std::string_view attribute)
     return std::distance(std::begin(ATTRIBUTES), std::ranges::find(ATTRIBUTES, attribute));
 }
 
-GltfModelShared GltfModel::make(OGLRenderData& renderData, const std::string& modelFilename,
+GltfModelShared GltfModel::make(RenderData& renderData, const std::string& modelFilename,
                                 const std::string& textureFilename)
 {
     std::shared_ptr<Texture> tex = Texture::make(textureFilename, false);
@@ -71,7 +71,7 @@ GltfModelShared GltfModel::make(OGLRenderData& renderData, const std::string& mo
 }
 
 GltfModel::GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
-                     OGLRenderData& renderData)
+                     RenderData& renderData)
     : mModel(model), mTex(tex)
 {
     glGenVertexArrays(1, &mVAO);
@@ -335,7 +335,7 @@ void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, flo
     mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, mJointMatrices);
 }
 
-void GltfModel::initializeNodes(OGLRenderData& renderData)
+void GltfModel::initializeNodes(RenderData& renderData)
 {
     if(mModel)
     {

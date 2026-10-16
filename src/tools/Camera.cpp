@@ -2,7 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-glm::mat4 Camera::getViewMatrix(OGLRenderData& renderData)
+glm::mat4 Camera::getViewMatrix(RenderData& renderData)
 {
     const float azimRad = glm::radians(renderData.rdViewAzimuth);
     const float elevRad = glm::radians(renderData.rdViewElevation);

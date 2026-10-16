@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-    glm::mat4 getViewMatrix(OGLRenderData& renderData);
+    glm::mat4 getViewMatrix(RenderData& renderData);
 
 private:
     glm::vec3 mViewDirection  = glm::vec3(0.0f, 0.0f, 0.0f);

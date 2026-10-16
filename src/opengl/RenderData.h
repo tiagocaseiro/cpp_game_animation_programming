@@ -27,7 +27,7 @@ struct OGLMesh
     std::vector<OGLVertexData> vertices;
 };
 
-struct OGLRenderData
+struct RenderData
 {
     GLFWwindow* rdWindow             = nullptr;
     unsigned int rdWidth             = 0;

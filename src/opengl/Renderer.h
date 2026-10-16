@@ -35,7 +35,7 @@ public:
 
 private:
     Renderer(ShaderShared const& gltfShader, ShaderShared const& debugGltfShader, const Framebuffer& framebuffer,
-             const std::shared_ptr<GltfModel>& gltfModel, const OGLRenderData& renderData);
+             const std::shared_ptr<GltfModel>& gltfModel, const RenderData& renderData);
 
     ShaderShared mGltfShader;
     ShaderShared mDebugGltfShader;
@@ -50,7 +50,7 @@ private:
     glm::mat4 mViewMatrix       = glm::mat4(1.0);
     glm::mat4 mProjectionMatrix = glm::mat4(1.0);
 
-    OGLRenderData mRenderData;
+    RenderData mRenderData;
     UserInterface mUserInterface;
     Timer mUIGenerateTimer;
     Camera mCamera;

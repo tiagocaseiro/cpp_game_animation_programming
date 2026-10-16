@@ -14,7 +14,7 @@
 
 SHARED_ONLY(GltfModel)
 
-class OGLRenderData;
+class RenderData;
 
 namespace tinygltf
 {
@@ -24,7 +24,7 @@ namespace tinygltf
 class GltfModel
 {
 public:
-    static GltfModelShared make(OGLRenderData& renderData, const std::string& modelFilename,
+    static GltfModelShared make(RenderData& renderData, const std::string& modelFilename,
                                 const std::string& textureFilename);
 
     ~GltfModel();
@@ -46,7 +46,7 @@ public:
     void blendAnimationFrame(int animNum, float time, float blendFactor);
     void crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor);
 
-    void initializeNodes(OGLRenderData& renderData);
+    void initializeNodes(RenderData& renderData);
 
     void setSkeletonSplitNode(int nodeNum);
 
@@ -58,7 +58,7 @@ public:
 
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
-              OGLRenderData& renderData);
+              RenderData& renderData);
 
     void updateAdditiveMask(GltfNode& node, int splitNodeNum);
 

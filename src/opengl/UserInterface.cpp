@@ -8,7 +8,7 @@
 #include "RenderData.h"
 #include "model/GltfNode.h"
 
-static void DrawNode(OGLRenderData& renderData, GltfNodeShared node, int* value)
+static void DrawNode(RenderData& renderData, GltfNodeShared node, int* value)
 {
     if(node)
     {
@@ -35,7 +35,7 @@ static void DrawNode(OGLRenderData& renderData, GltfNodeShared node, int* value)
     }
 }
 
-UserInterface::UserInterface(const OGLRenderData& renderData)
+UserInterface::UserInterface(const RenderData& renderData)
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -51,7 +51,7 @@ UserInterface::~UserInterface()
     ImGui::DestroyContext();
 }
 
-void UserInterface::createFrame(OGLRenderData& renderData)
+void UserInterface::createFrame(RenderData& renderData)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
