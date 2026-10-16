@@ -15,7 +15,7 @@ struct uniform_buffer_size
 {
 private:
     template <size_t Size, typename A, typename... Types>
-    struct uniform_buffer_size_internal : buffer_size_internal<Size + sizeof(A), Types...>
+    struct uniform_buffer_size_internal : uniform_buffer_size_internal<Size + sizeof(A), Types...>
     {
     };
 
