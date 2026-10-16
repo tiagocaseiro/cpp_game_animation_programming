@@ -43,9 +43,11 @@ public:
     void setTranslation(glm::vec3 const& translation);
     void setScale(glm::vec3 const& scale);
 
-    glm::quat getGlobalRotation() const;
-    glm::quat getLocalRotation() const;
-    glm::vec3 getGlobalPosition() const;
+    glm::quat globalRotation() const;
+    glm::quat localRotation() const;
+    glm::vec3 globalPosition() const;
+
+    void calculateNodeMatrices();
 
     void calculateLocalTransform();
 
@@ -74,6 +76,8 @@ private:
              std::vector<glm::mat4>& jointMatrices);
 
     void createDebugVertexBuffers();
+
+    void calculateNodeMatrix();
 
     void printNode(std::ostream& os, int depth) const;
 

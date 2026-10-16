@@ -130,7 +130,7 @@ void GltfNode::setScale(glm::vec3 const& scale)
     mBlendScale = scale;
 }
 
-glm::quat GltfNode::getGlobalRotation() const
+glm::quat GltfNode::globalRotation() const
 {
     glm::vec3 scale;
     glm::quat orientation;
@@ -146,9 +146,9 @@ glm::quat GltfNode::getGlobalRotation() const
     return glm::inverse(orientation);
 }
 
-glm::quat GltfNode::getLocalRotation() const { return mBlendRotation; }
+glm::quat GltfNode::localRotation() const { return mBlendRotation; }
 
-glm::vec3 GltfNode::getGlobalPosition() const
+glm::vec3 GltfNode::globalPosition() const
 {
     glm::vec3 scale;
     glm::quat orientation;
@@ -173,10 +173,23 @@ void GltfNode::calculateLocalTransform()
     mLocalTransform = tMatrix * rMatrix * sMatrix;
 }
 
-void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
-                                     const std::vector<glm::mat4>& inverseBindMatrices,
-                                     std::vector<glm::mat4>& jointMatrices)
+void GltfNode::calculateNodeMatrices()
 {
+    calculateNodeMatrix();
+
+    for(GltfNodeShared& child : mChildNodes)
+    {
+        if(child)
+        {
+            child->calculateNodeMatrices();
+        }
+    }
+}
+
+void GltfNode::calculateNodeMatrix()
+{
+    calculateLocalTransform();
+
     glm::mat4 parentMatrix = IDENTITY_TRANSFORM;
 
     if(GltfNodeShared parentNode = mParentNode.lock())
@@ -185,12 +198,19 @@ void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
     }
 
     mNodeMatrix = parentMatrix * mLocalTransform;
+}
 
-    const int jointIndex = nodeToJoint[mNodeNum];
+void GltfNode::calculateTreeMatrices(const std::vector<int>& nodeToJoint,
+                                     const std::vector<glm::mat4>& inverseBindMatrices,
+                                     std::vector<glm::mat4>& jointMatrices)
+{
+    calculateNodeMatrix();
+
+    int const jointIndex = nodeToJoint[mNodeNum];
 
     jointMatrices[jointIndex] = mNodeMatrix * inverseBindMatrices[jointIndex];
 
-    for(GltfNodeShared const& child : mChildNodes)
+    for(GltfNodeShared& child : mChildNodes)
     {
         if(child)
         {

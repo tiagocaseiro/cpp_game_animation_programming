@@ -8,6 +8,7 @@
 
 #include "GltfAnimationClip.h"
 #include "GltfCommon.h"
+#include "IKSolver.h"
 #include "opengl/Texture.h"
 #include "tools/Macros.h"
 
@@ -47,8 +48,6 @@ public:
 
     void initializeNodes(OGLRenderData& renderData);
 
-    void updateAdditiveMask(GltfNode& node, int splitNodeNum);
-
     void setSkeletonSplitNode(int nodeNum);
 
     void resetAdditiveMasks();
@@ -60,6 +59,8 @@ public:
 private:
     GltfModel(const std::shared_ptr<tinygltf::Model>& model, const std::shared_ptr<Texture>& tex,
               OGLRenderData& renderData);
+
+    void updateAdditiveMask(GltfNode& node, int splitNodeNum);
 
     void createVertexBuffers();
     void createIndexBuffer();
@@ -89,4 +90,6 @@ private:
 
     GLuint mVAO      = 0;
     GLuint mIndexVBO = 0;
+
+    IKSolver mIKSolver;
 };
