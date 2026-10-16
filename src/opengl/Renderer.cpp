@@ -96,7 +96,7 @@ void Renderer::setSize(int const width, int const height)
 
 Renderer::~Renderer() { mFramebuffer.cleanup(); }
 
-void Renderer::uploadData(const OGLMesh& vertexData)
+void Renderer::uploadData(const Mesh& vertexData)
 {
     mRenderData.rdTriangleCount = vertexData.vertices.size();
     mVertexBuffer.uploadData(vertexData);

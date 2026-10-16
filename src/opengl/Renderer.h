@@ -26,7 +26,7 @@ public:
     ~Renderer();
 
     void setSize(int const width, int const height);
-    void uploadData(const OGLMesh& vertexData);
+    void uploadData(const Mesh& vertexData);
     void draw();
     void handleKeyEvents(const int key, const int scancode, const int action, const int mods);
     void handleMouseButtonEvents(const int button, const int action, const int mods);

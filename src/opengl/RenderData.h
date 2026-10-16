@@ -15,16 +15,16 @@ enum BlendMode : int
     Additive
 };
 
-struct OGLVertexData
+struct VertexData
 {
     glm::vec3 position;
     glm::vec3 color;
     glm::vec2 uv;
 };
 
-struct OGLMesh
+struct Mesh
 {
-    std::vector<OGLVertexData> vertices;
+    std::vector<VertexData> vertices;
 };
 
 struct RenderData

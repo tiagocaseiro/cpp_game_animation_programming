@@ -8,9 +8,9 @@ VertexBuffer::VertexBuffer()
     glBindVertexArray(mVAO);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexVBO);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(OGLVertexData), (void*)offsetof(OGLVertexData, position));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(OGLVertexData), (void*)offsetof(OGLVertexData, color));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(OGLVertexData), (void*)offsetof(OGLVertexData, uv));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)offsetof(VertexData, position));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)offsetof(VertexData, color));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(VertexData), (void*)offsetof(VertexData, uv));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
@@ -26,11 +26,11 @@ VertexBuffer::~VertexBuffer()
     glDeleteVertexArrays(1, &mVAO);
 }
 
-void VertexBuffer::uploadData(const OGLMesh& vertexData)
+void VertexBuffer::uploadData(const Mesh& vertexData)
 {
     glBindVertexArray(mVAO);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, vertexData.vertices.size() * sizeof(OGLVertexData), &vertexData.vertices.at(0),
+    glBufferData(GL_ARRAY_BUFFER, vertexData.vertices.size() * sizeof(VertexData), &vertexData.vertices.at(0),
                  GL_DYNAMIC_DRAW);
 
     glBindVertexArray(0);

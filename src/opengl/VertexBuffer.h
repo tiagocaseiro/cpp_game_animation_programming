@@ -9,7 +9,7 @@ class VertexBuffer
 public:
     VertexBuffer();
     ~VertexBuffer();
-    void uploadData(const OGLMesh& vertexData);
+    void uploadData(const Mesh& vertexData);
     void bind();
     void unbind();
     void draw(GLuint mode, const int start, const int num);
