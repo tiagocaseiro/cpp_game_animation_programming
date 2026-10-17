@@ -309,11 +309,22 @@ float GltfModel::getClipEndTime(int animNum) const
     return 0.0f;
 }
 
+void GltfModel::updateJointsMatrices()
+{
+    if(mRootNode)
+    {
+        mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, mJointMatrices);
+    }
+}
+
 void GltfModel::blendAnimationFrame(int animNum, float time, float blendFactor)
 {
     GltfAnimationClip& animClip = mAnimClips[animNum];
     animClip.blendAnimationFrame(mNodes, mAdditiveAnimationMask, time, blendFactor);
-    mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, mJointMatrices);
+    if(mRootNode)
+    {
+        mRootNode->calculateTreeMatrices(mNodeToJoint, mInverseBindMatrices, mJointMatrices);
+    }
 }
 
 void GltfModel::crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor)
@@ -353,6 +364,15 @@ void GltfModel::initializeNodes(RenderData& renderData)
             GltfNode::createNodeTree(rootNode, *mModel, mNodeToJoint, mInverseBindMatrices, mJointMatrices, mNodes);
 
         renderData.rdRootNode = mRootNode;
+
+        renderData.rdNodeNames.clear();
+        for(GltfNodeShared node : mNodes)
+        {
+            if(node)
+            {
+                renderData.rdNodeNames.push_back(node->mNodeName.c_str());
+            }
+        }
     }
 }
 
@@ -393,8 +413,10 @@ void GltfModel::resetAdditiveMasks()
     mInvertedAdditiveAnimationMask = std::vector<bool>(mNodes.size(), false);
 }
 
-void GltfModel::setInverseKinematicsNode(int effectiveNodeNum, int ikChainRootNodeNum)
+void GltfModel::setInverseKinematicsNodes(int numIterations, int effectiveNodeNum, int ikChainRootNodeNum)
 {
+    mIKSolver = IKSolver(numIterations);
+
     if(effectiveNodeNum < 0 || effectiveNodeNum >= mNodes.size() || ikChainRootNodeNum < 0 ||
        ikChainRootNodeNum >= mNodes.size())
     {
@@ -409,7 +431,7 @@ void GltfModel::setInverseKinematicsNode(int effectiveNodeNum, int ikChainRootNo
         return;
     }
 
-    std::vector<GltfNodeShared> ikNodes = {currentNode};
+    std::vector<GltfNodeShared> ikNodes = std::vector{currentNode};
 
     while(currentNode != rootNode)
     {
@@ -424,5 +446,7 @@ void GltfModel::setInverseKinematicsNode(int effectiveNodeNum, int ikChainRootNo
         }
     }
 
-    // mIKSolver.setNodes(ikNodes);
+    mIKSolver.setNodes(ikNodes);
 }
+
+void GltfModel::solveByCCD(glm::vec3 target) { mIKSolver.solveCCD(target); }

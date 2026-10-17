@@ -172,7 +172,19 @@ void Renderer::draw()
             mGltfModel->playAnimation(mRenderData.rdAnimClip, mRenderData.rdAnimSpeed, mRenderData.rdAnimBlendFactor);
         }
     }
+    else if(mRenderData.rdIkMode == IKMode::CCD)
+    {
+        static int numIterations = 0;
+        if(numIterations != mRenderData.rdIkNumIterations)
+        {
+            numIterations = mRenderData.rdIkNumIterations;
+            mGltfModel->setInverseKinematicsNodes(mRenderData.rdIkNumIterations, mRenderData.rdIkEffectorNode,
+                                                  mRenderData.rdIkRootNode);
+        }
 
+        mGltfModel->solveByCCD(mRenderData.rdIkTargetPos);
+        mGltfModel->updateJointsMatrices();
+    }
     else
     {
         mRenderData.rdAnimEndTime = mGltfModel->getClipEndTime(mRenderData.rdAnimClip);

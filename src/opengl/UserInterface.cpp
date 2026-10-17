@@ -188,6 +188,22 @@ void UserInterface::createFrame(RenderData& renderData)
         }
     }
 
+    if(ImGui::CollapsingHeader("gltf Inverse Kinematics", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+
+        ImGui::RadioButton("Off", (int*)&renderData.rdIkMode, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("CCD", (int*)&renderData.rdIkMode, 1);
+        ImGui::SameLine();
+        ImGui::RadioButton("FABRIK", (int*)&renderData.rdIkMode, 2);
+
+        if(renderData.rdIkMode == IKMode::CCD)
+        {
+            ImGui::SliderInt("Num Iterations", &renderData.rdIkNumIterations, 1, 50);
+            ImGui::SliderFloat3("Target", &renderData.rdIkTargetPos[0], -3, 3);
+        }
+    }
+
     ImGui::Checkbox("Show Mesh", &renderData.rdShowMesh);
     ImGui::Checkbox("Show Skeleton Nodes", &renderData.rdShowNodeDebugMenu);
 

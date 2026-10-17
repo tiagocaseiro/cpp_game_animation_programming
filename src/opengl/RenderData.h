@@ -8,11 +8,18 @@
 
 struct GLFWwindow;
 
-enum BlendMode : int
+enum class BlendMode
 {
     FadeInOut = 0,
     CrossFade,
     Additive
+};
+
+enum class IKMode
+{
+    OFF = 0,
+    CCD,
+    FABRIK
 };
 
 struct VertexData
@@ -46,8 +53,9 @@ struct RenderData
     int rdNodeCount                  = 0;
 
     std::vector<char const*> rdAnimationClipNames;
+    std::vector<char const*> rdNodeNames;
 
-    bool rdPlayAnimation                 = true;
+    bool rdPlayAnimation                 = false;
     int rdAnimClip                       = 5;
     float rdAnimDurationMs               = 0.0f;
     int rdAnimClipSize                   = 0;
@@ -70,4 +78,11 @@ struct RenderData
 
     bool rdShowMesh          = true;
     bool rdShowNodeDebugMenu = true;
+
+    IKMode rdIkMode         = IKMode::OFF;
+    int rdIkNumIterations   = 10;
+    glm::vec3 rdIkTargetPos = glm::vec3(-1.972f, 1.631f, 0.726f);
+
+    int rdIkEffectorNode = 19;
+    int rdIkRootNode     = 25;
 };

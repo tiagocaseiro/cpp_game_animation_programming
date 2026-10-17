@@ -46,13 +46,17 @@ public:
     void blendAnimationFrame(int animNum, float time, float blendFactor);
     void crossBlendAnimationFrame(int sourceAnimNum, int destAnimNum, float time, float blendFactor);
 
+    void updateJointsMatrices();
+
     void initializeNodes(RenderData& renderData);
 
     void setSkeletonSplitNode(int nodeNum);
 
     void resetAdditiveMasks();
 
-    void setInverseKinematicsNode(int effectiveNodeNum, int ikChainRootNodeNum);
+    void setInverseKinematicsNodes(int numIterations, int effectiveNodeNum, int ikChainRootNodeNum);
+
+    void solveByCCD(glm::vec3 target);
 
     std::vector<GltfNodeShared> const nodes() const { return mNodes; }
 

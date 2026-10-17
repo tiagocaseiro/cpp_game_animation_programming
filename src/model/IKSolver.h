@@ -13,6 +13,6 @@ public:
 private:
     std::vector<GltfNodeShared> mNodes;
 
-    const int mIterations  = 0;
-    const float mThreshold = 0.00001f;
+    int mIterations  = 0;
+    float mThreshold = 0.00001f;
 };
