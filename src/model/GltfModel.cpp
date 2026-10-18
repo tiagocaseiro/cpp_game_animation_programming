@@ -415,8 +415,6 @@ void GltfModel::resetAdditiveMasks()
 
 void GltfModel::setInverseKinematicsNodes(int numIterations, int effectiveNodeNum, int ikChainRootNodeNum)
 {
-    mIKSolver = IKSolver(numIterations);
-
     if(effectiveNodeNum < 0 || effectiveNodeNum >= mNodes.size() || ikChainRootNodeNum < 0 ||
        ikChainRootNodeNum >= mNodes.size())
     {
@@ -446,7 +444,13 @@ void GltfModel::setInverseKinematicsNodes(int numIterations, int effectiveNodeNu
         }
     }
 
-    mIKSolver.setNodes(ikNodes);
+    mIKSolver = std::make_unique<CCDSolver>(ikNodes, numIterations);
 }
 
-void GltfModel::solveByCCD(glm::vec3 target) { mIKSolver.solveCCD(target); }
+void GltfModel::solveByCCD(glm::vec3 target)
+{
+    if(mIKSolver)
+    {
+        mIKSolver->solve(target);
+    }
+}

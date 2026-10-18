@@ -4,11 +4,12 @@
 
 #include <glm/gtx/quaternion.hpp>
 
-IKSolver::IKSolver(int iterations) : mIterations(iterations) {}
+IKSolver::IKSolver(std::vector<GltfNodeShared> const& nodes, int iterations, float threshold)
+    : mNodes(nodes), mIterations(iterations), mThreshold(threshold)
+{
+}
 
-void IKSolver::setNodes(std::vector<GltfNodeShared> nodes) { mNodes = nodes; }
-
-bool IKSolver::solveCCD(glm::vec3 target)
+bool CCDSolver::solve(glm::vec3 target)
 {
     if(mNodes.empty() || mNodes.front() == nullptr)
     {
@@ -56,17 +57,20 @@ bool IKSolver::solveCCD(glm::vec3 target)
             node->blendRotation(nodeLocalRotation * effectorToTargetLocalRotation, 1.0f);
 
             node->calculateNodeMatrices();
-            if(isFinished())
-            {
-                return true;
-            }
         }
     }
 
     return false;
 }
 
-bool IKSolver::solveFABRIK(glm::vec3 target)
+FABRIKSolver::FABRIKSolver(std::vector<GltfNodeShared> const& nodes, int iterations, float threshold)
+    : IKSolver(nodes, iterations, threshold),
+      mBoneLengths(calculateBoneLengths(nodes)),
+      mNodeGlobalPositions(mNodes.size())
+{
+}
+
+bool FABRIKSolver::solve(glm::vec3 target)
 {
     if(mNodes.empty() || mNodes.front() == nullptr)
     {
@@ -80,14 +84,33 @@ bool IKSolver::solveFABRIK(glm::vec3 target)
         return glm::distance(target, effectorGlobalPosition) <= mThreshold;
     };
 
+    for(int i = 0; i != mNodes.size(); i++)
+    {
+        if(GltfNodeShared node = mNodes[i])
+        {
+            mNodeGlobalPositions[i] = node->globalPosition();
+        }
+    }
+
+    glm::vec3 base;
+
+    if(GltfNodeShared const baseNode = mNodes.back())
+    {
+        base = baseNode->globalPosition();
+    }
+
     for(int i = 0; i != mIterations; i++)
     {
         for(int j = 1; j < mNodes.size(); j++)
         {
             if(isFinished())
             {
+                adjustNodes();
                 return true;
             }
+            solveForward(target);
+            solveForward(base);
+            adjustNodes();
 
             if(isFinished())
             {
@@ -99,10 +122,78 @@ bool IKSolver::solveFABRIK(glm::vec3 target)
     return false;
 }
 
-void IKSolver::solveFABRIKForward(glm::vec3 target) {}
+void FABRIKSolver::solveForward(glm::vec3 target)
+{
+    mNodeGlobalPositions[0] = target;
 
-void IKSolver::solveFABRIKBackward(glm::vec3 base) {}
+    for(int i = 1; i != mNodeGlobalPositions.size(); i++)
+    {
+        glm::vec3 const direction = glm::normalize(mNodeGlobalPositions[i] - mNodeGlobalPositions[i - 1]);
+        glm::vec3 const offset    = direction * mBoneLengths[i - 1];
 
-void IKSolver::calculateBoneLengths() {}
+        mNodeGlobalPositions[i] = mNodeGlobalPositions[i - 1] + offset;
+    }
+}
 
-void IKSolver::adjustFABRIKNodes() {}
+void FABRIKSolver::solveBackward(glm::vec3 base)
+{
+    mNodeGlobalPositions[mNodeGlobalPositions.size() - 1] = base;
+
+    for(int i = mNodeGlobalPositions.size() - 2; i >= 0; i--)
+    {
+        glm::vec3 const direction = glm::normalize(mNodeGlobalPositions[i] - mNodeGlobalPositions[i + 1]);
+        glm::vec3 const offset    = direction * mBoneLengths[i];
+
+        mNodeGlobalPositions[i] = mNodeGlobalPositions[i + 1] + offset;
+    }
+}
+
+std::vector<float> FABRIKSolver::calculateBoneLengths(std::vector<GltfNodeShared> const& nodes) const
+{
+    std::vector<float> boneLengths;
+    if(nodes.empty() == false)
+    {
+        boneLengths.resize(nodes.size() - 1);
+    }
+
+    for(int i = 0; i != nodes.size() - 1; i++)
+    {
+        GltfNodeShared const node1 = nodes[i];
+        GltfNodeShared const node2 = nodes[i + 1];
+
+        if(node1 && node2)
+        {
+            float const boneLength = glm::distance(node1->globalPosition(), node2->globalPosition());
+
+            boneLengths[i] = boneLength;
+        }
+    }
+    return boneLengths;
+}
+
+void FABRIKSolver::adjustNodes()
+{
+    for(int i = mNodeGlobalPositions.size() - 1; i >= 0; i--)
+    {
+        GltfNodeShared currentNode = mNodes[i];
+        GltfNodeShared nextNode    = mNodes[i - 1];
+
+        glm::vec3 const currentNodeGlobalPosition = currentNode->globalPosition();
+        glm::quat const currentNodeGlobalRotation = currentNode->globalRotation();
+
+        glm::vec3 const nextNodeGlobalPosition = nextNode->globalPosition();
+
+        glm::vec3 const toNext    = glm::normalize(nextNodeGlobalPosition - currentNodeGlobalPosition);
+        glm::vec3 const toDesired = glm::normalize(mNodeGlobalPositions[i - 1] - currentNodeGlobalPosition[i]);
+
+        glm::quat const nodeRotation = glm::rotation(toNext, toDesired);
+        glm::quat const localRotation =
+            currentNodeGlobalRotation * nodeRotation * glm::conjugate(currentNodeGlobalRotation);
+
+        glm::quat const currentNodeLocalRotation = currentNode->localRotation();
+
+        currentNode->blendRotation(currentNodeLocalRotation * localRotation, 1.0f);
+
+        currentNode->calculateNodeMatrices();
+    }
+}

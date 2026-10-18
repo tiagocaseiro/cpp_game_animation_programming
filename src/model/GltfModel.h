@@ -95,5 +95,5 @@ private:
     GLuint mVAO      = 0;
     GLuint mIndexVBO = 0;
 
-    IKSolver mIKSolver;
+    IKSolverUnique mIKSolver;
 };
