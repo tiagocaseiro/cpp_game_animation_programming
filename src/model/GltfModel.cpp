@@ -385,7 +385,7 @@ void GltfModel::updateAdditiveMask(GltfNode& node, int splitNodeNum)
 
     mAdditiveAnimationMask[node.mNodeNum] = false;
 
-    for(GltfNodeShared child : node.Children())
+    for(GltfNodeShared child : node.children())
     {
         if(child)
         {

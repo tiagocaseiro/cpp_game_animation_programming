@@ -14,7 +14,7 @@ static void DrawNode(RenderData& renderData, GltfNodeShared node, int* value)
     {
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 
-        if(node->Children().empty())
+        if(node->children().empty())
         {
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
@@ -26,7 +26,7 @@ static void DrawNode(RenderData& renderData, GltfNodeShared node, int* value)
             std::string const radioButtonId = radioButtonBaseId + std::to_string(node->mNodeNum);
 
             ImGui::RadioButton(radioButtonId.c_str(), value, node->mNodeNum);
-            for(auto childNode : node->Children())
+            for(auto childNode : node->children())
             {
                 DrawNode(renderData, childNode, value);
             }

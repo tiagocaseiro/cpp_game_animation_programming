@@ -43,8 +43,8 @@ struct RenderData
     unsigned int rdGltfTriangleCount = 0;
     float rdFrameTime                = 0.0f;
     float rdUIGenerateTime           = 0.0f;
-    float rdViewAzimuth              = 320.0f;
-    float rdViewElevation            = -15.0f;
+    float rdViewAzimuth              = 345.0f;
+    float rdViewElevation            = -16.0f;
     int rdMoveForward                = 0;
     int rdMoveRight                  = 0;
     int rdMoveUp                     = 0;
@@ -74,7 +74,7 @@ struct RenderData
 
     GltfNodeShared rdRootNode;
 
-    glm::vec3 rdCameraWorldPosition = glm::vec3(1.5f, 4.0f, 4.5f);
+    glm::vec3 rdCameraWorldPosition = glm::vec3(-0.09f, 4.21f, 4.47f);
 
     bool rdShowMesh          = true;
     bool rdShowNodeDebugMenu = true;

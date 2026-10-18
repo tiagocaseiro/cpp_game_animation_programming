@@ -58,7 +58,7 @@ public:
 
     glm::mat4 worldTransform() const { return mNodeMatrix; }
 
-    std::vector<GltfNodeShared> const& Children() const { return mChildNodes; }
+    std::vector<GltfNodeShared> const& children() const { return mChildNodes; }
 
     GltfNodeShared ParentNode() const { return mParentNode.lock(); };
 
