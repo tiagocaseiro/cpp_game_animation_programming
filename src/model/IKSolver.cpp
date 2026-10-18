@@ -8,7 +8,7 @@ IKSolver::IKSolver(int iterations) : mIterations(iterations) {}
 
 void IKSolver::setNodes(std::vector<GltfNodeShared> nodes) { mNodes = nodes; }
 
-bool IKSolver::solveCCD(glm::vec3 target) const
+bool IKSolver::solveCCD(glm::vec3 target)
 {
     if(mNodes.empty() || mNodes.front() == nullptr)
     {
@@ -65,3 +65,44 @@ bool IKSolver::solveCCD(glm::vec3 target) const
 
     return false;
 }
+
+bool IKSolver::solveFABRIK(glm::vec3 target)
+{
+    if(mNodes.empty() || mNodes.front() == nullptr)
+    {
+        return false;
+    }
+
+    GltfNodeShared const effector = mNodes.front();
+
+    auto const isFinished = [effector, target, this] {
+        glm::vec3 const effectorGlobalPosition = effector->globalPosition();
+        return glm::distance(target, effectorGlobalPosition) <= mThreshold;
+    };
+
+    for(int i = 0; i != mIterations; i++)
+    {
+        for(int j = 1; j < mNodes.size(); j++)
+        {
+            if(isFinished())
+            {
+                return true;
+            }
+
+            if(isFinished())
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void IKSolver::solveFABRIKForward(glm::vec3 target) {}
+
+void IKSolver::solveFABRIKBackward(glm::vec3 base) {}
+
+void IKSolver::calculateBoneLengths() {}
+
+void IKSolver::adjustFABRIKNodes() {}
