@@ -1,8 +1,7 @@
-#include <iostream>
 #include <memory>
 
-#include "Logger.h"
 #include "Window.h"
+#include "tools/Logger.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION

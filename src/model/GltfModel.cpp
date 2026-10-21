@@ -12,8 +12,9 @@
 #include <glm/gtx/matrix_decompose.hpp>
 
 #include "GltfNode.h"
-#include "Logger.h"
 #include "opengl/RenderData.h"
+#include "tools/Logger.h"
+
 
 namespace chrono = std::chrono;
 

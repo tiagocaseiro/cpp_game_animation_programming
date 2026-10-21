@@ -9,7 +9,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Logger.h"
+#include "tools/Logger.h"
 
 #include "Shader.h"
 #include "ShaderStorageBuffer.h"

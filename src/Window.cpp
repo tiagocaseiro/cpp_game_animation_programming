@@ -4,7 +4,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Logger.h"
+#include "tools/Logger.h"
 
 bool Window::init(const int width, const int height, const std::string& title)
 {
