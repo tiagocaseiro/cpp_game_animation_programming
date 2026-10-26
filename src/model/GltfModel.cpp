@@ -15,7 +15,6 @@
 #include "opengl/RenderData.h"
 #include "tools/Logger.h"
 
-
 namespace chrono = std::chrono;
 
 static const std::string_view ATTRIBUTES[] = {"POSITION", "NORMAL", "TEXCOORD_0", "JOINTS_0", "WEIGHTS_0"};
@@ -414,41 +413,7 @@ void GltfModel::resetAdditiveMasks()
     mInvertedAdditiveAnimationMask = std::vector<bool>(mNodes.size(), false);
 }
 
-void GltfModel::setInverseKinematicsNodes(int numIterations, int effectiveNodeNum, int ikChainRootNodeNum)
-{
-    if(effectiveNodeNum < 0 || effectiveNodeNum >= mNodes.size() || ikChainRootNodeNum < 0 ||
-       ikChainRootNodeNum >= mNodes.size())
-    {
-        return;
-    }
-
-    GltfNodeShared currentNode = mNodes[effectiveNodeNum];
-    GltfNodeShared rootNode    = mNodes[ikChainRootNodeNum];
-
-    if(currentNode == nullptr || rootNode == nullptr)
-    {
-        return;
-    }
-
-    std::vector<GltfNodeShared> ikNodes = std::vector{currentNode};
-
-    while(currentNode != rootNode)
-    {
-        if(GltfNodeShared const parentNode = currentNode->ParentNode())
-        {
-            ikNodes.push_back(parentNode);
-            currentNode = parentNode;
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    mIKSolver = std::make_unique<CCDSolver>(ikNodes, numIterations);
-}
-
-void GltfModel::solveByCCD(glm::vec3 target)
+void GltfModel::solveIK(glm::vec3 target)
 {
     if(mIKSolver)
     {

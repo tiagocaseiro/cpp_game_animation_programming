@@ -54,9 +54,42 @@ public:
 
     void resetAdditiveMasks();
 
-    void setInverseKinematicsNodes(int numIterations, int effectiveNodeNum, int ikChainRootNodeNum);
+    template <typename IKSolverType>
+    void setIKNodes(int numIterations, int effectiveNodeNum, int ikChainRootNodeNum)
+    {
+        if(effectiveNodeNum < 0 || effectiveNodeNum >= mNodes.size() || ikChainRootNodeNum < 0 ||
+           ikChainRootNodeNum >= mNodes.size())
+        {
+            return;
+        }
 
-    void solveByCCD(glm::vec3 target);
+        GltfNodeShared currentNode = mNodes[effectiveNodeNum];
+        GltfNodeShared rootNode    = mNodes[ikChainRootNodeNum];
+
+        if(currentNode == nullptr || rootNode == nullptr)
+        {
+            return;
+        }
+
+        std::vector<GltfNodeShared> ikNodes = std::vector{currentNode};
+
+        while(currentNode != rootNode)
+        {
+            if(GltfNodeShared const parentNode = currentNode->ParentNode())
+            {
+                ikNodes.push_back(parentNode);
+                currentNode = parentNode;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        mIKSolver = std::make_unique<IKSolverType>(ikNodes, numIterations);
+    }
+
+    void solveIK(glm::vec3 target);
 
     std::vector<GltfNodeShared> const nodes() const { return mNodes; }
 
