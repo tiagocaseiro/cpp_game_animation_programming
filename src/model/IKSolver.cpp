@@ -64,9 +64,7 @@ bool CCDSolver::solve(glm::vec3 target)
 }
 
 FABRIKSolver::FABRIKSolver(std::vector<GltfNodeShared> const& nodes, int iterations, float threshold)
-    : IKSolver(nodes, iterations, threshold),
-      mBoneLengths(calculateBoneLengths(nodes)),
-      mNodeGlobalPositions(mNodes.size())
+    : IKSolver(nodes, iterations, threshold), mNodeGlobalPositions(mNodes.size())
 {
 }
 
@@ -76,6 +74,8 @@ bool FABRIKSolver::solve(glm::vec3 target)
     {
         return false;
     }
+
+    mBoneLengths = calculateBoneLengths(mNodes);
 
     GltfNodeShared const effector = mNodes.front();
 
@@ -109,7 +109,7 @@ bool FABRIKSolver::solve(glm::vec3 target)
                 return true;
             }
             solveForward(target);
-            solveForward(base);
+            solveBackward(base);
             adjustNodes();
 
             if(isFinished())
@@ -124,7 +124,7 @@ bool FABRIKSolver::solve(glm::vec3 target)
 
 void FABRIKSolver::solveForward(glm::vec3 target)
 {
-    mNodeGlobalPositions[0] = target;
+    mNodeGlobalPositions.front() = target;
 
     for(int i = 1; i != mNodeGlobalPositions.size(); i++)
     {
@@ -137,7 +137,7 @@ void FABRIKSolver::solveForward(glm::vec3 target)
 
 void FABRIKSolver::solveBackward(glm::vec3 base)
 {
-    mNodeGlobalPositions[mNodeGlobalPositions.size() - 1] = base;
+    mNodeGlobalPositions.back() = base;
 
     for(int i = mNodeGlobalPositions.size() - 2; i >= 0; i--)
     {
@@ -173,7 +173,7 @@ std::vector<float> FABRIKSolver::calculateBoneLengths(std::vector<GltfNodeShared
 
 void FABRIKSolver::adjustNodes()
 {
-    for(int i = mNodeGlobalPositions.size() - 1; i >= 0; i--)
+    for(int i = mNodeGlobalPositions.size() - 1; i > 0; i--)
     {
         GltfNodeShared currentNode = mNodes[i];
         GltfNodeShared nextNode    = mNodes[i - 1];
@@ -184,7 +184,7 @@ void FABRIKSolver::adjustNodes()
         glm::vec3 const nextNodeGlobalPosition = nextNode->globalPosition();
 
         glm::vec3 const toNext    = glm::normalize(nextNodeGlobalPosition - currentNodeGlobalPosition);
-        glm::vec3 const toDesired = glm::normalize(mNodeGlobalPositions[i - 1] - currentNodeGlobalPosition[i]);
+        glm::vec3 const toDesired = glm::normalize(mNodeGlobalPositions[i - 1] - currentNodeGlobalPosition);
 
         glm::quat const nodeRotation = glm::rotation(toNext, toDesired);
         glm::quat const localRotation =

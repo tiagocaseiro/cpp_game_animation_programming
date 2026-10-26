@@ -197,7 +197,7 @@ void UserInterface::createFrame(RenderData& renderData)
         ImGui::SameLine();
         ImGui::RadioButton("FABRIK", (int*)&renderData.rdIkMode, 2);
 
-        if(renderData.rdIkMode == IKMode::CCD)
+        if(renderData.rdIkMode == IKMode::CCD || renderData.rdIkMode == IKMode::FABRIK)
         {
             ImGui::SliderInt("Num Iterations", &renderData.rdIkNumIterations, 1, 50);
             ImGui::SliderFloat3("Target", &renderData.rdIkTargetPos[0], -3, 3);

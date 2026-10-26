@@ -178,11 +178,24 @@ void Renderer::draw()
         if(numIterations != mRenderData.rdIkNumIterations)
         {
             numIterations = mRenderData.rdIkNumIterations;
-            mGltfModel->setInverseKinematicsNodes(mRenderData.rdIkNumIterations, mRenderData.rdIkEffectorNode,
-                                                  mRenderData.rdIkRootNode);
+            mGltfModel->setIKNodes<CCDSolver>(mRenderData.rdIkNumIterations, mRenderData.rdIkEffectorNode,
+                                              mRenderData.rdIkRootNode);
         }
 
-        mGltfModel->solveByCCD(mRenderData.rdIkTargetPos);
+        mGltfModel->solveIK(mRenderData.rdIkTargetPos);
+        mGltfModel->updateJointsMatrices();
+    }
+    else if(mRenderData.rdIkMode == IKMode::FABRIK)
+    {
+        static int numIterations = 0;
+        if(numIterations != mRenderData.rdIkNumIterations)
+        {
+            numIterations = mRenderData.rdIkNumIterations;
+            mGltfModel->setIKNodes<FABRIKSolver>(mRenderData.rdIkNumIterations, mRenderData.rdIkEffectorNode,
+                                                 mRenderData.rdIkRootNode);
+        }
+
+        mGltfModel->solveIK(mRenderData.rdIkTargetPos);
         mGltfModel->updateJointsMatrices();
     }
     else

@@ -45,7 +45,7 @@ private:
 
     void adjustNodes();
 
-    const std::vector<float> mBoneLengths;
+    std::vector<float> mBoneLengths;
 
     std::vector<glm::vec3> mNodeGlobalPositions;
 };
