@@ -49,6 +49,8 @@ public:
     void updateJointsMatrices();
 
     void initializeNodes(RenderData& renderData);
+    void initializeNodes(GltfNodeShared& rootNode, GltfNodesList& nodes, std::vector<glm::mat4>& jointMatrices) const;
+    void initializeAnimationClips(std::vector<GltfAnimationClip>& animClips) const;
 
     void setSkeletonSplitNode(int nodeNum);
 

@@ -18,6 +18,8 @@
 
 SHARED_ONLY(GltfNode);
 
+using GltfNodesList = std::vector<GltfNodeShared>;
+
 namespace tinygltf
 {
     class Model;
@@ -42,6 +44,9 @@ public:
     void setRotation(glm::quat const& rotation);
     void setTranslation(glm::vec3 const& translation);
     void setScale(glm::vec3 const& scale);
+
+    void setWorldPosition(glm::vec3 worldPosition);
+    void setWorldRotation(glm::vec3 worldRotation);
 
     glm::quat globalRotation() const;
     glm::quat localRotation() const;

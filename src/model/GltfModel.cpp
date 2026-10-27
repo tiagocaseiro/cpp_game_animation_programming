@@ -376,6 +376,36 @@ void GltfModel::initializeNodes(RenderData& renderData)
     }
 }
 
+void GltfModel::initializeNodes(GltfNodeShared& rootNode, GltfNodesList& nodes,
+                                std::vector<glm::mat4>& jointMatrices) const
+{
+    if(mModel)
+    {
+        std::vector<int> const& nodesNums = mModel->scenes[0].nodes;
+
+        jointMatrices = std::vector<glm::mat4>(mInverseBindMatrices.size(), glm::mat4());
+
+        int const rootNodeNum = nodesNums.at(0);
+        int const nodeCount   = mModel->nodes.size();
+
+        nodes = std::vector<GltfNodeShared>(nodeCount, nullptr);
+        rootNode =
+            GltfNode::createNodeTree(rootNodeNum, *mModel, mNodeToJoint, mInverseBindMatrices, jointMatrices, nodes);
+    }
+}
+
+void GltfModel::initializeAnimationClips(std::vector<GltfAnimationClip>& animClips) const
+{
+    if(mModel)
+    {
+        animClips.clear();
+        for(const auto& anim : mModel->animations)
+        {
+            animClips.push_back(GltfAnimationClip::make(*mModel, anim));
+        }
+    }
+}
+
 void GltfModel::updateAdditiveMask(GltfNode& node, int splitNodeNum)
 {
     if(node.mNodeNum == splitNodeNum)

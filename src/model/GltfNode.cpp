@@ -130,6 +130,10 @@ void GltfNode::setScale(glm::vec3 const& scale)
     mBlendScale = scale;
 }
 
+void GltfNode::setWorldPosition(glm::vec3 worldPosition) { std::abort(); }
+
+void GltfNode::setWorldRotation(glm::vec3 worldRotation) { std::abort(); }
+
 glm::quat GltfNode::globalRotation() const
 {
     glm::vec3 scale;
