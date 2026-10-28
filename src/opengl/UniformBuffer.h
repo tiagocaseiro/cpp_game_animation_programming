@@ -8,7 +8,7 @@
 
 #include "tools/Macros.h"
 
-SHARED_ONLY(UniformBuffer);
+OPTIONAL_ONLY(UniformBuffer);
 
 template <typename... Types>
 struct uniform_buffer_size
@@ -35,10 +35,10 @@ constexpr size_t uniform_buffer_size_v = uniform_buffer_size<Types...>::value;
 class UniformBuffer
 {
 public:
-    static UniformBufferShared make(int bindingPoint, int bufferSize);
+    static UniformBufferOptional make(int bindingPoint, int bufferSize);
 
     template <typename... Types>
-    static UniformBufferShared make(int bindingPoint)
+    static UniformBufferOptional make(int bindingPoint)
     {
         static constexpr size_t bufferSize = uniform_buffer_size_v<Types...>;
         return make(bindingPoint, bufferSize);

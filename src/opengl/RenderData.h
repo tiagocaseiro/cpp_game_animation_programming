@@ -36,21 +36,21 @@ struct Mesh
 
 struct RenderData
 {
-    GLFWwindow* rdWindow             = nullptr;
-    unsigned int rdWidth             = 0;
-    unsigned int rdHeight            = 0;
-    unsigned int rdTriangleCount     = 0;
-    unsigned int rdGltfTriangleCount = 0;
-    float rdFrameTime                = 0.0f;
-    float rdUIGenerateTime           = 0.0f;
-    float rdViewAzimuth              = 345.0f;
-    float rdViewElevation            = -16.0f;
-    int rdMoveForward                = 0;
-    int rdMoveRight                  = 0;
-    int rdMoveUp                     = 0;
-    float rdTickDiff                 = 0.0;
-    int rdAnimationClipSize          = 0;
-    int rdNodeCount                  = 0;
+    GLFWwindow* rdWindow         = nullptr;
+    unsigned int rdWidth         = 0;
+    unsigned int rdHeight        = 0;
+    unsigned int rdTriangleCount = 0;
+    unsigned int rnInstanceCount = 0;
+    float rdFrameTime            = 0.0f;
+    float rdUIGenerateTime       = 0.0f;
+    float rdViewAzimuth          = 345.0f;
+    float rdViewElevation        = -16.0f;
+    int rdMoveForward            = 0;
+    int rdMoveRight              = 0;
+    int rdMoveUp                 = 0;
+    float rdTickDiff             = 0.0;
+    int rdAnimationClipSize      = 0;
+    int rdNodeCount              = 0;
 
     std::vector<char const*> rdAnimationClipNames;
     std::vector<char const*> rdNodeNames;

@@ -44,7 +44,7 @@ void UniformBuffer::endUpload()
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-UniformBufferShared UniformBuffer::make(int bindingPoint, int bufferSize)
+UniformBufferOptional UniformBuffer::make(int bindingPoint, int bufferSize)
 {
-    return UniformBufferShared(new UniformBuffer(bindingPoint, bufferSize));
+    return UniformBufferOptional(UniformBuffer(bindingPoint, bufferSize));
 }

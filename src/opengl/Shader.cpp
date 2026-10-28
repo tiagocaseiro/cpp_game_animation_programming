@@ -86,3 +86,22 @@ Shader::Shader(GLuint shaderProgram) : mShaderProgram(shaderProgram) {}
 void Shader::use() { glUseProgram(mShaderProgram); }
 
 Shader::~Shader() { glDeleteProgram(mShaderProgram); }
+
+bool Shader::initUniformLocation(std::string const& uniformName)
+{
+    if(mShaderProgram > 0)
+    {
+        mUniformLocation = glGetUniformLocation(mShaderProgram, uniformName.c_str());
+        return mUniformLocation.has_value();
+    }
+
+    return false;
+}
+
+void Shader::setUniformValue(int const value)
+{
+    if(mShaderProgram > 0 && mUniformLocation.has_value())
+    {
+        glUniform1i(*mUniformLocation, value);
+    }
+}
